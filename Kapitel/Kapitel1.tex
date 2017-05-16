@@ -1,0 +1,241 @@
+\chapter{Einführung}
+\label{cha:Einfuehrung}
+
+\section{ACHTUNG}
+{\LARGE Stand 16.05.2017
+
+Leider sehe ich mich derzeit nicht in der Lage, meine Erkenntnisse rechtlich 
+gefahrlos zu veröffentlichen! Ich werde versuchen, über offizielle Stellen des
+FIAT-Konzerns die Erlaubnis zu erlangen, dies doch veröffentlichen zu dürfen.
+Bis zur Klärung dieses Sachverhalts sehe ich mich gezwungen,
+meine Arbeit vorerst teilweise zurückzuziehen.
+
+Vielen Dank für Ihr Verständnis.
+
+
+schlizbaeda@gmx.de}
+\newpage
+
+\section{Kurzbeschreibung und technische Daten des {\FLTester}s}
+Der {\FLTester} ist ein elektronisches Diagnosegerät für Kraftfahrzeuge
+der FIAT-Gruppe: Es ist ein tragbarer Computer (basierend auf dem
+8bit-Mikroprozessor Hitachi HD6303RP), der den Datenaustausch mit den in
+den Fahrzeugen eingebauten elektronischen Steuergeräten ermöglicht.\\
+Die Software (Prüfprogramm) wird dem {\FLTester} über ein EPROM-Modul
+zugeführt, das abhängig vom zu prüfenden Steuergerätetyp ausgewählt
+und gesteckt werden muss.
+
+Auszug aus der Original-Betriebsanleitung:\\
+\textit{Das Diagnosegerät kann die betreffenden Daten des zu
+analysierenden Systems auswerten und speichern, und so dem Operator über
+ein Display geeignete Instruktionen zur Analyse eventueller
+Fehlfunktionen und zur Auffindung der beschädigten Komponenten geben.\\
+Der Tester erkennt automatisch den Steuergerätetyp, an den er
+angeschlossen ist. Die Verbindung mit dem Bord-Steuergerät erfolgt durch
+einen spezifischen Standardstecker (siehe Abb. 1).\\
+Das Testgerät kann außerdem die Informationen an verschiedene Terminals
+weiterleiten (Drucker, Monitor, zentrale Computer u.\,s.\,w.).}
+
+\subsection*{Technische Daten}
+\begin{tabular}{ll}
+Stromversorgung:          & 7 -- 30V dc\\
+Arbeitstemperatur:        & 0 -- 70°C\\
+Format der Diagnosecodes: & NRZ, PCM, Zweiphasen\\
+Eingangsfrequenz:         & 1Hz -- 10kHz\\
+Zusätzlicher Ausgang:     & RS232 (50 -- 19200bps)\\
+Display:                  & alphanumerisches LCD, 4 Zeilen à 16 Zeichen\\
+CPU:                      & Hitachi HD6303RP (8bit, 1MHz)\\
+Speicherkapazität RAM:    & 2K/8KByte mit permanenter Datenspeicherung\\
+Speicherkapazität ROM:    & max. 136KByte (abhängig vom EPROM-Modul)\\
+\end{tabular}
+\\
+
+Der Aufbau entspricht dem technischen Stand der Heimcomputer aus den
+frühen 1980er-Jahren wie \zB dem Commodore 64. Die Entwicklung des
+{\FLTester}s dürfte etwa um 1990 erfolgt sein. Auf einigen vorliegenden
+Modulen lassen die Beschriftungen auf ein Herstelldatum von 1995 \bzw
+1996 schließen. 
+
+
+\section{Aufbau der EPROM-Module}
+Die EPROM-Module bestehen aus einer Leiterplatte, die mit drei EPROM-ICs
+vom Typ 27C512 (512kBit, 64KByte) ist. Bei IC1 sind die drei oberen
+Adressleitungen (A13, A14 und A15) fest mit GND verbunden, so dass
+dieser EPROM nur mit max. 8KByte Daten befüllt werden kann. Um dem
+{\FLTester}, der eigentlich nur 64KByte adressieren kann, einen größeren
+Programmspeicher zur Verfügung zu stellen, befindet sich auf den Modulen
+eine zusätzliche ChipEnable-Logik, die über einen 74HC00 (NAND-Gatter)
+umgesetzt ist. Damit kann der {\FLTester} über dieses "`Banking"' bis zu
+136KByte ROM-Speicher adressieren.
+
+Von den Leiterplatten der EPROM-Module gibt es mindestens drei
+Layoutvarianten:\\
+\begin{tabular}{ll}
+\textbf{79 54 33 50}: & Bestückung mit kleineren EPROMs bis M27C256\\
+                      & wurde für die ersten Module mit den niedrigen Nummern verwendet\\
+                      & \zB M1C, M2B, M3B, \textbf{M6B}, M7A \ua(?)\\
+\textbf{79 63 15 40}: & Bestückung mit 64KByte-EPROMs (M27C512)\\
+                      & Diese Variante wurde schaltungstechnisch (noch) nicht untersucht\\
+                      & gefunden auf den Modulen M12A und M15A\\
+                      & $\rightarrow$ Die Daten konnten problemlos ausgelesen werden.\\
+\textbf{79 63 82 40}: & häufigstes Modul, Bestückung mit 64KByte-EPROMs (M27C512)\\
+                      & vermutlich der aktuelle Designstand\\
+                      & Alle späteren Module (\zB \textbf{M23A}) verwenden dieses Layout\\
+\end{tabular}
+\\
+
+Die Stromlaufpläne der EPROM-Module befinden sich im Anhang.
+
+
+\section{Liste der EPROM-Module}
+\begin{table}[!h]
+%\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|l|l|l|}
+\hline%\toprule[2pt]
+\textbf{Modul} & \textbf{Bemerkung}              & \textbf{Fahrzeugtyp(en) (unvollständig)}\\ 
+\hline%\midrule[2pt]
+M1C            & IAW, SPI-GM                     & Delta GT i.e. 8V Kat\\
+\hline
+M2B            & Digiplex 2, Microplex           & \\
+\hline
+M3B            & Bosch Monojetronic, L3.1 / L3.2 & \\
+\hline
+M4B            & S.C.S. / S.I. Fahrwerk          & \\
+\hline
+\textbf{M6B}   & IAW USA '83                     & Delta HF Turbo / Integrale\\
+               &                                 & EVO I (ohne Kat)\\
+               &                                 & EVO 8V mit Kat\\
+\hline%\bottomrule[2pt]
+\end{tabular}
+\vspace{0.5cm}
+\caption{{\FLTester} und Memory}
+\label{tab:Modulliste1}
+\end{table}
+
+\begin{tabular}{|l|l|l|}
+\hline%\toprule[2pt]
+\textbf{Modul} & \textbf{Bemerkung}              & \textbf{Fahrzeugtyp(en) (unvollständig)}\\ 
+\hline%\midrule[2pt]
+M7A            & Girling ABS 2/2                 & Tipo 2l.GT / Tempra Bj. 91\\
+\hline
+M8B            & ECVT Automatikgetriebe          & \\
+\hline
+M9A            & Bosch KE3.3                     & \\
+\hline
+M10A           & Automatik-Getriebe VW AG4       & \\
+\hline
+M11B           & EGR Diesel                      & \\
+\hline
+M12B           & Bosch ABS 2E / 2SI              & Croma / Coupe Mai 96\\
+\hline
+M13A           & Bosch M1.7 / M2.7 Lancia        & \\
+\hline
+M14A           & autom. Heizung, Klimaanlage     & \\
+\hline
+M15A           & Niveauregulierung               & Tempra S.W.\\
+\hline
+M18A           & Airbag, Diebstahlwarnanlage,    & Croma / Thema\\
+               & Sitzverstellung                 & \\
+\hline
+M19A           & IAW - P8                        & \\
+\hline
+M20A           & Digiplex 2/2S, Microplex/S      & \\
+\hline
+M21B           & Weber - SPI                     & Punto 60 (alt)\\
+\hline
+\textbf{M23A}  & IAW - P8 (selbstadaptierend)    & Delta EVO II 16V Kat\\
+\hline
+M24A           & Bosch M1.7 / M2.7 Fiat          & \\
+\hline
+M25B           & Bosch Monomotronic MA1.7 u. MA1.7.3 & \\
+\hline
+M26A           & elektronisch gesteuertes Automatikgetriebe ZF & \\
+\hline
+M28A           & IAW 8F. 52 & \\
+\hline
+M29A           & Fiat Airbag, Diebstahlwarnanlage/Wegfahrsperre & \\
+               & Lancia Diebstahlwarnanlage (ohne R40/41/42)    & \\
+\hline
+M30A           & Bosch ABS 2SI                   & Dedra S.W. 4x4\\
+\hline
+M31A           & Bendix ABS                      & Ducato / Ulysse / Zeta / Scudo ab 94\\
+\hline
+M32A           & IAW                             & Ducato / Ulysse\\
+\hline
+M33A           & Multipoint GM                   & \\
+\hline
+M34A           & Bosch MSA 11 Turbo Diesel       & \\
+\hline
+M35A           & Bosch MP3.2                     & Ulysse Turbo / Zeta\\
+\hline
+M36B           & Motronic M2.10.3                & \\
+\hline
+M38A           & Diagnose IGE, Info-Center       & \\
+\hline
+M39A           & el. Automatik ZF, AISIN-Automatik & \\
+\hline
+M40A           & Airbag, TRW, Diebstahlsicherung & Sipea\\
+\hline
+M41A           & ABS5.0, Servotronic             & Lancia Kappa bis 96\\
+\hline
+M42B           & Superverriegelung/Diebstahlsicherung & Ulysse / Zeta\\
+\hline
+M43A           & MFI-0 Hitachi                   & Barchetta\\
+\hline
+M44A           & Motronic M3.7, M2.7             & \\
+\hline
+M45A           & Fiat-Code / Lancia-Code         & Punto (Einspritzung und Codeadapter)\\
+\hline
+M46A           & Bosch M1.7 / M2.7, Fiat-Code    & \\
+\hline%\bottomrule[2pt]
+\end{tabular}
+\vspace{0.5cm}
+\caption{{\FLTester} und Memory}
+\label{tab:Modulliste2}
+\end{table}
+
+\begin{tabular}{|l|l|l|}
+\hline%\toprule[2pt]
+\textbf{Modul} & \textbf{Bemerkung}              & \textbf{Fahrzeugtyp(en) (unvollständig)}\\ 
+\hline%\midrule[2pt]
+M47A           & ABS-Ate MK20                    & alle Modelle (Bravo / Brava)\\
+\hline
+M48A           & IWA-IAF13, Fiat-Code            & 1,6l (90PS)\\
+\hline
+M49A           & Bosch Motronic M2.10.4, Fiat-Code & HGT\\
+\hline
+M50A           & Airbag, Alarm ICIT '95          & alle Modelle\\
+\hline
+M52A           & Klimaanlage Behr                & Lancia Z\\
+\hline
+M53A           & Lucas Diesel DPC                & Marea / Bravo / Brava\\
+\hline
+M54A           & Aisin Automatik                 & \\
+\hline
+M55A           & ECVT Automatikgetriebe          & Punto Selectra\\
+\hline
+M56A           & Bosch ABS5.3                    & Coupe / Punto ab Mai 96\\
+\hline
+M57A           & IAW 16F.ET                      & Punto / Cinquecento (neuere)\\
+\hline
+M58A           & Airbag, Gurtstraffer            & Ulysse / Scudo / Zeta\\
+\hline
+M59A           & IAW 18F                         & Punto 1,2 16V\\
+\hline
+M60A           & Diesel Lucas                    & Lancia Z.2.1 TD\\
+\hline
+M61A           & Klimaanlage Borletti            & Marea\\
+\hline
+M62A           & ABS Lucas                       & \\
+\hline
+M63A           & Diesel Lucas DPC                & Marea TD\\
+\hline
+M65A           & Infosender Datenübertragung     & Kappa \\
+\hline%\bottomrule[2pt]
+\end{tabular}
+\vspace{0.5cm}
+\caption{{\FLTester} und Memory}
+\label{tab:Modulliste3}
+\end{table}
+

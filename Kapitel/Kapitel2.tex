@@ -1,0 +1,391 @@
+\chapter{Programmierung der EPROM-Module}
+\label{cha:Programmierung}
+
+
+In diesem Kapitel wird beschrieben, welche Schritte notwendig sind, um
+die EPROM-Module auszulesen, zu löschen und neu zu programmieren.
+
+\section{Hardwarevoraussetzungen}
+Folgende Geräte werden benötigt, um eine Neuprogrammierung der
+EPROM-Module durchführen zu können (Stand 2012):\\
+\begin{table}[!h]
+%\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Gerät}           & \textbf{Handelsbezeichnung} & \textbf{Lieferant} & \textbf{Bestellnummer}\\
+\hline
+UV-Löschgerät            & H-TRONIC ProMA              & reichelt           & EPROMLÖSCHER\\
+                         & UV-Licht-Löschgerät         &                    & \\
+\hline
+Programmiergerät         & {\Batronix}                 & Batronix           & BX32P-II\\
+\hline
+Adapter für EPROM-Module & Eigenbau                    & ---                & \\
+\hline
+PC/Laptop mit Windows 7  & IBM-kompatibel              & ---                & \\
+\hline
+\end{tabular}
+\vspace{0.5cm}
+\caption{erforderliche Hardware}
+\label{tab:erforderlicheHardware}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.67\textwidth]{Bilder/UV-Loeschgeraet.jpg}
+\caption{UV-Löschgerät für EPROMs (eingebaut in eine Holzkiste)}
+\label{fig:UVLoeschgeraet}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.67\textwidth]{Bilder/Programmiergeraet.jpg}
+\caption{EPROM-Programmiergerät}
+\label{fig:Programmiergeraet}
+\end{figure}
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=0.67\textwidth]{Bilder/Adapter.jpg}
+\caption{Adapter zur Programmierung der EPROMs auf den Modulen}
+\label{fig:Adapter}
+\end{figure}
+
+\section{Vorbereitung und Umbau der Module für Zugriff über \Batronix}
+{\LARGE Abschnitt entfernt}
+%Da auf den EPROM-Modulen bis zu drei EPROMs fest verlötet sind, aber auf
+%dem verwendeten Programmiergerät {\Batronix} die Bausteine normalerweise
+%direkt auf den Nullkraftsockel gesteckt werden müssen, musste eine
+%Adaptierung gebaut werden, an die das EPROM-Modul angesteckt werden
+%kann. Die zu programmierenden EPROMs (IC1, IC2 und IC3) auf dem Modul
+%können somit über den 25-poligen SUB-D-Stecker des Moduls und über eine
+%im Modul nachgerüstete 10-polige Stiftleiste kontaktiert werden.\\
+%Mittels Kippschaltern auf der Adaptierung wird der zu programmierende
+%EPROM (IC1, IC2 oder IC3) ausgewählt. Dabei wird das Signal CE (Pin 20)
+%so beschaltet, wie es auch im Realbetrieb über den {\FLTester} erfolgt.\\
+%Ferner müssen die Ausgänge des Latchbausteins IC4 (74HC573) während der
+%Programmierung in den hochohmigen Tristate-Modus geschaltet werden,
+%damit dessen am Daten- und Adressbus angeschlossenen Ausgänge nicht
+%stören. Dies wird durch einen leichten Umbau der Module erreicht:
+%Eine als Leiterbahn ausgeführte feste Masseverbindung des Enable-Signals
+%von IC4 (Pin 1) wird aufgetrennt und durch einen PullDown-Widerstand
+%(4k7) ersetzt. Das Enable-Signal ist im Normalbetrieb über den PullDown
+%weiterhin mit Masse verbunden und damit aktiviert. Während der
+%Programmierung kann Enable auf +5V geschaltet werden, um die Ausgänge
+%von IC4 in den gewünschten Tristate-Modus zu bringen.\\
+%Die restlichen Signale des EPROMs sind als 1:1-Verbindungen ausgeführt.
+
+\subsection{Programmieradapter für die EPROM-Module}
+Der Aufbau einer passenden Adaptierung für den Programmiervorgang kann
+auf einer Lochrasterplatine mit 19 x 15 Löchern aufgebaut werden. Dabei
+ist nur darauf zu achten, dass sich der Einbauplatz X100 rechts oben
+befindet, damit der Adapter problemlos in den Nullkraftsockel des
+Programmiergerätes {\Batronix} gesteckt werden kann, wie es in Abbildung
+\ref{fig:AdapterInProgger} dargestellt ist.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.67\textwidth]{Bilder/Adapter_auf_Programmiergeraet.jpg}
+\caption{Adapter auf Programmiergerät {\Batronix}}
+\label{fig:AdapterInProgger}
+\end{figure}
+
+Die Kontaktierung erfolgt...
+% einerseits über eine 25-polige SUB-D-Buchse
+%(X1), die an den SUB-D-Stecker des EPROM-Moduls angesteckt wird.
+%Weiterhin ist eine Flachbandleitung (X2) für die Adressleitungen A0-A7
+%auf eine 10-polige Stiftleiste im Inneren des Moduls zu stecken. Dafür
+%muss das EPROM-Modul wie im Abschnitt \ref{subsect:Umbau} beschrieben
+%umgebaut werden.
+
+{\LARGE Abschnitt entfernt}
+
+
+Die Programmierung der bis zu drei in den Modulen verbauten EPROMs
+erfolgt für jeden Baustein einzeln und getrennt. Sowohl in der
+Programmiersoftware {\ProgExpress} als auch auf dem Adapter muss der zu
+programmierende Baustein (IC1, IC2 oder IC3) richtig ausgewählt werden.
+Auf dem Programmieradapter erfolgt die Auswahl über die richtige
+Schalterstellung der beiden Kippschalter S101 und S102:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{Bilder/Programmieradapter_sch.pdf}
+\caption{Schaltplan des Programmieradapters}
+\label{fig:Programmieradapter_sch}
+\end{figure}
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=0.49\textwidth]{Bilder/Programmieradapter_top.pdf}
+\includegraphics[width=0.49\textwidth]{Bilder/Programmieradapter_bot.pdf}
+\includegraphics[width=0.49\textwidth]{Bilder/Programmieradapter_brd.pdf}
+\caption{Layout des Programmieradapters}
+\label{fig:Programmieradapter_layout}
+\end{figure}
+
+S101 ermöglicht die Auswahl "`IC1"' oder "`IC2+3"'. In der Stellung 
+"`IC1"' wird immer IC1 des Moduls angesprochen. Es ist egal in welcher
+Stellung S102 steht.\\
+S102 dient der Auswahl "`IC2"' oder "`IC3"'. Dabei darf S101
+\textit{nicht} in Stellung "`IC1"' stehen!\\
+Siehe Abbildung \ref{fig:Adapter}
+
+In den Abbildungen \ref{fig:Programmieradapter_sch} und 
+\ref{fig:Programmieradapter_layout} werden der Schaltplan und eine
+mögliche Umsetzung auf einer Lochrasterplatine illustriert. Abbildung
+\ref{fig:Programmieradapter_Fotos} zeigt weitere Fotos von der fertigen
+Lochrasterplatine des Programmieradapters.
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=0.49\textwidth]{Bilder/Adapter01.jpg}
+\includegraphics[width=0.49\textwidth]{Bilder/Adapter02.jpg}
+\includegraphics[width=0.49\textwidth]{Bilder/Adapter03.jpg}
+\includegraphics[width=0.49\textwidth]{Bilder/Adapter04.jpg}
+\caption{Fotos des Programmieradapters}
+\label{fig:Programmieradapter_Fotos}
+\end{figure}
+
+
+\newpage
+\subsection{Umbau der Leiterplatten der EPROM-Module}
+\label{subsect:Umbau}
+Damit die EPROM-Module über das hier beschriebene Verfahren neu
+programmiert werden können, sind folgende Umbaumaßnahmen an den Modulen
+vorzunehmen:
+
+\begin{tabular}{ll}
+1. & ... (entfernt)\\
+2. & ... (entfernt)\\
+3. & ... (entfernt)\\
+%1. & Einlöten der 10-poligen Stiftleiste an einem vorhandenem Einbauplatz\\
+%2. & Auftrennen der Leiterbahn für die Masseverbindung zu IC4 Pin 1\\
+%3. & PullDown-Widerstand (4k7) zu IC4 Pin 1 für Normalbetrieb\\
+%   & und Vcc-Verbindung für Programmierung herstellen\\
+\end{tabular}
+
+Die Umbaumaßnahmen sind in Abbildung \ref{fig:Umbau} dargestellt.
+
+
+\section{Softwareinstallation Batronix Prog-Express (Windows)}
+Die Software {\ProgExpress} für das Programmiergerät {\Batronix} erfolgt
+unter Windows über die beiliegende CD, auf welcher die Version 1.6
+(Stand 2012) der Software enthalten ist. Der Installationsassistent für
+Windows ist einfach und selbsterklärend. Für die ebenfalls auf der CD
+vorhandene Linux-Variante muss zusätzlich die %quelloffene 
+Linux-Implementierung des .NET-Frameworks, \textit{Mono} installiert
+werden (\url{http://www.mono-project.com}).
+
+\begin{figure}[!b]
+\centering
+\includegraphics[width=0.9\textwidth]{Bilder/Umbau01.jpg}
+\includegraphics[width=0.9\textwidth]{Bilder/Umbau02.jpg}
+\caption{umgebaute Leiterplatte eines EPROM-Moduls}
+\label{fig:Umbau}
+\end{figure}
+
+
+\section{Auslesen der Module zur Datensicherung}
+\label{sect:Auslesen}
+Wenn ein Koffer mit EPROM-Modulen für den {\FLTester} gekauft wurde, ist
+es zunächst erforderlich, die Daten auf den Modulen auszulesen und auf
+dem  PC zu sichern. 
+\begin{bclogo}[logo = \bclampe, noborder = true]{Hinweis}
+Die EPROM-Module müssen \textit{vor} dem Auslesen der Moduldaten so
+umgebaut werden, wie in Kapitel \ref{subsect:Umbau} beschrieben!
+\end{bclogo}
+Der Anschluss des umgebauten Moduls muss wie in Abbildung
+\ref{fig:Modulanschluss} dargestellt erfolgen:
+
+{\LARGE Teilabschnitt entfernt}
+
+%\begin{itemize}
+%\item{Das Programmiergerät {\Batronix} an einen USB-Port des PCs anschließen.}
+%\item{Die Programmieradaptierung in den Nullkraftsockel des Programmiergerätes stecken. Dabei auf die Ausrichtung aus Abbildung \ref{fig:AdapterInProgger} achten.
+%\item{Die SUB-D-Stecker sind anzustecken}
+%\item{Die Flachbandleitung muss auf die eingelötete Stiftleiste des Moduls gesteckt werden. Für die richtige Pinzuordnung muss das Flachbandkabel \textit{ohne Drehung} gesteckt werden!}
+%\end{itemize}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.67\textwidth]{Bilder/Modulanschluss.jpg}
+\caption{Anschluss eines EPROM-Moduls über den Programmieradapter am Programmiergerät {\Batronix}}
+\label{fig:Modulanschluss}
+\end{figure}
+
+Beim Auslesen der Moduldaten sind...
+
+{\LARGE Abschnitt entfernt}
+% drei Leseläufe für IC1, IC2 und IC3
+%erforderlich. Auf IC1 können nur 8KByte gespeichert (und ausgelesen)
+%werden, daher muss in den Chip-Optionen für IC1 der auszulesende
+%Speicherbereich von Startadresse 0 bis Endadresse 0x1FFF (8191 dez.)
+%gesetzt werden!\\
+%IC2 und IC3 enthalten Daten im gesamten Speicherbereich (64KByte) des
+%Bausteins (27C512). Es gibt auch Leiterplatten mit kleineren EPROMs
+%(\zB 27C256 mit 32KByte). In diesem Falle kann der Bausteintyp entweder
+%über die Funktion "`Chip Autoerkennung"' der Programmiersoftware
+%ermittelt werden, dann wird seine Speichergröße von der Software
+%automatisch korrigiert oder der Speicherbereich wird auch hier manuell
+%eingeschränkt.\\
+%Die ausgelesenen Daten werden zweckmäßigerweise in einem Ordner mit dem
+%Modulnamen (\zB "`M23A"') unter den Dateinamen \texttt{IC1.bin},
+%\texttt{IC2.bin} und \texttt{IC3.bin} abgelegt.
+
+\subsection*{Auslesevorgang über die Software {\ProgExpress}}
+Die Oberfläche der Software {\ProgExpress} ist im Wesentlichen in drei
+Spalten konzipiert. Links befinden sich die möglichen Aktionen als
+Piktogramme. In der Mitte (Hauptteil) wird die gewählte Aktion im Detail
+angezeigt: Oben die genaue Parametrierung und im unteren Teil die
+Einzelschritte der Aktion. Durch Anklicken der einzelnen Elemente können
+notwendige  Anpassungen vorgenommen werden. Der rechte Teil enthält ein
+Log-Fenster, in dem alle durchgeführten Aktionen mit Ergebnis angezeigt
+werden.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{Bilder/Prog-Express_Auslesen_IC2.png}
+\caption{Grundlegende Softwareeinstellungen zum Auslesen der EPROM-Daten}
+\label{fig:SoftEinstellungen}
+\end{figure}
+
+Zum Auslesen der Moduldaten sind in  folgende Schritte
+notwendig:
+Zunächst muss in der Software im linken Bereich die richtige Aktion, 
+hier das Auslesen der Chipdaten durch Anklicken des entsprechenden
+Piktogramms gewählt werden.\\
+\includegraphics[]{Bilder/Prog-Express_Auslesen_icon.png}
+
+{\LARGE Abschnitt entfernt}
+%In bestimmten Fällen, insbesondere bei IC1, von dem aufgrund seiner
+%Beschaltung in den EPROM-Modulen nur ein Block von 8KByte adressiert
+%werden kann, muss in den Chip-Optionen die Speichergröße angepasst
+%werden, siehe Abbildungen \ref{fig:SoftEinstellungenIC1} und
+%\ref{fig:SoftEinstellungenIC1addr}\\
+%Bei IC2 und IC3 müssen dagegen die kompletten Speicherbereiche
+%ausgelesen werden! Dazu vor dem Ausleseprozess in den Chip-Optionen die
+%Einschränkung des Adressbereichs von IC1 wieder deaktivieren. Die
+%Software {\ProgExpress} verwendet bei der richtigen Auswahl des Chiptyps
+%die richtige Speichergröße.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.92\textwidth]{Bilder/Prog-Express_Auslesen_IC1_8kB.png}
+\caption{Softwareeinstellungen zum Auslesen von IC1 (max. 8KByte)}
+\label{fig:SoftEinstellungenIC1}
+\end{figure}
+
+Auf den einzelnen Modulen können folgende EPROM-Typen verbaut sein:\\
+\begin{tabular}{ll}
+M27C64  & 8KByte Speicherkapazität\\
+M27C256 & 32KByte Speicherkapazität\\
+M27C512 & 64KByte Speicherkapazität\\
+\end{tabular}
+\\ \\ Der Auslesevorgang dauert pro Baustein nur ca. 1 Sekunde.
+\begin{bclogo}[logo = \bclampe, noborder = true]{Hinweise}
+Um die \textit{vollständigen} Daten eines EPROM-Moduls zu erhalten,
+müssen logischerweise \textit{alle} bestückten EPROMs (IC1, IC2 und IC3)
+ausgelesen werden!\\
+Für IC2 und IC3 muss unbedingt darauf geachtet werden, deren
+\textit{gesamten} Speicherbereich auszulesen!\\
+Die Schalter S101 und S102 auf dem Programmieradapter sind \textit{vor}
+dem Auslesevorgang in die richtige Schaltstellung zu bringen!
+\end{bclogo}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\textwidth]{Bilder/Prog-Express_IC1_8kB.png}
+\caption{Parametrierung des gewünschten Adressbereichs von IC1 (8KByte)}
+\label{fig:SoftEinstellungenIC1addr}
+\end{figure}
+
+
+\section{Löschen der Module mit UV-Licht}
+\label{sect:Loeschen}
+In den EPROM-Modulen wurden die klassischen EPROMS verbaut, die nur mit
+UV-Licht gelöscht werden können. Dazu wird ein EPROM-Löschgerät mit
+UV-Lampe (Abbildung \ref{fig:UVLoeschgeraet}) verwendet, das aus
+Sicherheitsgründen in eine lichtundurchlässige Holzkiste eingebaut
+wurde.
+\begin{bclogo}[arrondi = 0.2, logo = \bcinfo, ombre = true, epOmbre = 0.25, couleurOmbre = black !30,blur]{Achtung}
+Das vom EPROM-Löschgerät abgegebene UV-Licht kann die Haut und vor allem
+die Augen schwer schädigen! Daher darf das Löschgerät \textbf{nur im
+geschlossenen Zustand} betrieben werden!
+\end{bclogo}
+Vor dem Programmieren eines EPROM-Moduls mit neuen Daten müssen zunächst
+die vorhandenen Daten von den EPROMs gelöscht werden. Dazu muss der
+Deckel der Holzkiste abgenommen werden und eine oder zwei Leiterplatten
+von geöffneten EPROM-Modulen über die UV-Lampe des Löschgerätes gelegt
+werden. Dabei darf nicht vergessen werden, die Lichtschutzaufkleber von
+den runden Quarzglasfenstern der EPROMs zu entfernen!\\
+Vor dem Einschalten des Löschgerätes muss aus Gründen des Eigenschutzes
+unbedingt der Holzdeckel geschlossen werden.\\
+Der Löschvorgang unter UV-Licht dauert ca. 20 -- 30 Minuten. Bei
+kürzeren Belichtungszeiten können einzelne Bits stehen bleiben, die dann
+bei der nachfolgenden Neuprogrammierung stören! Nach dem Löschvorgang
+sollte vor der Neuprogrammierung nochmals für mindestens die gleiche
+Zeit gewartet werden, um die soeben gelöschten EPROMs "`abkühlen"' zu
+lassen.
+\begin{bclogo}[logo = \bclampe, noborder = true]{Hinweis}
+Technisch gesehen erfolgt das Löschen über eine Ionisation des
+Halbleitermaterials durch das UV-Licht, die die gespeicherten
+Ladungsträger abfließen lässt. Diese Ionisation kann nach dem Abschalten
+des UV-Lichtes noch einige Zeit anhalten, wenn auch in geringerem Maße,
+aber möglicherweise dafür ausreichend, dass die durch eine unmittelbar
+folgende Programmierung neu aufgebrachten Ladungsträger zumindest
+teilweise wieder abfließen. Dies kann sich nach außen dann durch 
+kippende Bits oder eine verkürzte Datenlebensdauer bemerkbar machen.
+\end{bclogo}
+Ein vollständig gelöschtes EPROM enthält nur Bits mit dem binären Wert
+"`1"'. Beim Programmiervorgang werden ausschließlich "`0"'-Bits
+programmiert, die "`1"'-Bits bleiben leer ("`unprogrammiert"'). Details
+zur Technologie von EPROMs befinden sich hier:\\
+\url{https://de.wikipedia.org/wiki/Erasable_Programmable_Read-Only_Memory}
+
+
+\section{Programmieren der Module mit (neuen) Daten}
+{\LARGE Abschnitt entfernt}
+
+%Auch beim Programmieren von EPROM-Modulen sind drei Durchläufe für IC1,
+%IC2 und IC3 erforderlich. Aufgrund der internen Beschaltung im Modul
+%können auf IC1 nur 8KByte gespeichert werden, daher muss in den
+%Chip-Optionen für IC1 der zu programmierende Speicherbereich von
+%Startadresse 0 bis Endadresse 0x1FFF (8191 dez.) gesetzt werden!\\
+%IC2 und IC3 können dagegen über ihren gesamten Speicherbereich
+%adressiert und programmiert werden.\\
+Grundsätzlich gelten die für das Auslesen der EPROM-Module relevanten
+Punkte (siehe Kapitel \ref{sect:Auslesen}) auch für die Programmierung.
+
+\subsection*{Programmiervorgang über die Software {\ProgExpress}}
+Zum Programmieren der Moduldaten sind in  folgende Schritte
+notwendig:
+Zunächst muss in der Software im linken Bereich die richtige Aktion, 
+hier das Programmieren der Chipdaten durch Anklicken des entsprechenden
+Piktogramms gewählt werden.\\
+\includegraphics[]{Bilder/Prog-Express_Programmieren_icon.png}
+
+Vor der Programmierung sollte unbedingt kontrolliert werden, ob in der
+Software die richtige Programmierdatei gewählt wurde und ob die Schalter
+S101 und S102 auf dem Programmieradapter in der richtigen Stellung sind.
+Während solche Fehler beim Auslesen -- sofern rechtzeitig bemerkt --#
+noch relativ unproblematisch sind, sollten sie beim Programmieren auf
+jeden Fall vermieden werden, da ein falsch programmierter EPROM erst
+wieder \textit{mühsam} gelöscht werden muss (siehe Kapitel
+\ref{sect:Loeschen})!
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.92\textwidth]{Bilder/Prog-Express_Einstellungen_IC2.png}
+\caption{Softwareeinstellungen zum Programmieren von IC2}
+\label{fig:SoftEinstellungenIC2}
+\end{figure}
+
+Der Programmiervorgang dauert nur wenige Sekunden, ist aber etwas
+langsamer als der Auslesevorgang. Wichtig ist der Schritt "`Leertest"'
+vor der Programmierung. Dort wird überprüft, ob wirklich jede
+Speicherstelle des EPROMs gelöscht ist, \dahe nur "`1"'-Bits enthält.
+Wenn dies nicht der Fall ist, muss das Modul zuvor erst gelöscht werden!
+Diese Prüfung und der Vergleich der Chipdaten stellen sicher, dass die
+programmierten Daten wirklich korrekt im EPROM abgelegt sind.
+
